@@ -1,6 +1,5 @@
 <?php 
 
 // Routes are defined here
-
-Route::set('','home@cover');
-Route::set('blazer','home@blazer');
+Route::set('','homepage@loginPage');
+Route::post('', 'homepage@formHandler');
