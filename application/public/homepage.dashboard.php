@@ -59,13 +59,7 @@
                             <div class="card-action">
                                <!-- data table -->
                                <table>
-                                 <tbody id="tableOutput">
-                                    <tr>
-                                       <td class="holder_icon">icon</td>
-                                       <td class="holder_text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur quas, blanditiis modi optio aliquid temporibus reiciendis possimus. Autem similique ducimus laudantium, exercitationem repellat eveniet iure magni quod deleniti dolores ad?</td>
-                                       <td class="holder__delete">asdnasod asod iason dis</td>
-                                    </tr>
-                                 </tbody>
+                                 <tbody id="tableOutput"></tbody>
                                  </table>
                                        
                                <!-- data table ends -->
@@ -106,6 +100,7 @@ $(document).ready(function() {
    $('.modal').modal();
 });
 
+// process new task addtion
 $("#addTask").on("click",function(){
    var textField = $("#taskTextField").val();
    var time = new Date();
@@ -120,7 +115,7 @@ $("#addTask").on("click",function(){
          resp = JSON.parse(resp);
          if(resp.success){
             // success, so update the table with data
-
+            // $("#tableOutput").append(string);
          }else{
             // false, so show error
             alert("There was an error processing your request : " + resp.message);
@@ -131,26 +126,17 @@ $("#addTask").on("click",function(){
 
 function processTasks(){
    var data = {{tasks}};
-   
    // if there is data, or it is non zero
    if(data){
       // populate the table with data #tableOutput
-      var string = "";
       data.forEach(function(x){
-         string += '<tr id="task_'+x.uid+'">';
-            string += '<td id="icon_'+x.uid+'" data-uid="'+x.uid+'" class="holder_icon">';
-            string += '<p><label><input id="checkbox_'+x.uid+'" onclick="processCheckbox('+x.uid+')" type="checkbox"/><span><span></label></p></td>';
-            string += '<td id="text_'+x.uid+'" class="holder_text">'+x.taskname+'</td>';
-            string += '<td id="delete_'+x.uid+'" onclick="processDelete('+x.uid+')" data-uid="'+x.uid+'" class="right-align holder_delete"><i class="material-icons">close</i></td>';
-         string += '<tr>';
+         addEntry(x);
       });
-
-      $("#tableOutput").html(string);
 
    }
    // when there is no data
    else{
-      // handle it
+      $("#tableOutput").html("<tr><td>Looks like you have finished all your work ! Great Job.</td></tr>");
    }
 }
 
@@ -162,7 +148,16 @@ function processDelete(uid){
    console.log(uid);
 }
 
+function addEntry(x){
+   string = "";
+   string += '<tr id="task_'+x.uid+'">';
+   string += '<td id="icon_'+x.uid+'" data-uid="'+x.uid+'" class="holder_icon">';
+   string += '<p><label><input id="checkbox_'+x.uid+'" onclick="processCheckbox('+x.uid+')" type="checkbox"/><span><span></label></p></td>';
+   string += '<td id="text_'+x.uid+'" class="holder_text">'+x.taskname+'</td>';
+   string += '<td id="delete_'+x.uid+'" onclick="processDelete('+x.uid+')" data-uid="'+x.uid+'" class="right-align holder_delete"><i class="material-icons">close</i></td>';
+   string += '<tr>';
+   $("#tableOutput").append(string);
+}
 
 </script>
-
 </html>
