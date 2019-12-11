@@ -1,7 +1,7 @@
 <?php 
 
 $protected['app']['name'] 				= "ToDo";
-$protected['app']['url'] 				= "http://localhost:8080";
+$protected['app']['url'] 				= "http://localhost/ieeetodo/";
 
 
 include "application/config/config.admin.php";

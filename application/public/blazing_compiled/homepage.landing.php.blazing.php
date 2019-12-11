@@ -12,7 +12,7 @@
          }
       </style>
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <link rel="stylesheet" type="text/css" href="http://localhost:8080/assets/css/material.css"> 
+      <link rel="stylesheet" type="text/css" href="http://localhost/ieeetodo//assets/css/material.css"> 
    </head>
    <body>
       <nav class="light-blue lighten-1" role="navigation">
@@ -60,7 +60,7 @@
       </footer>
       <!-- modal1 content -->
       <div id="modal1" class="modal">
-        <form method="post" action="" class="col s12">
+        <form method="post" action="<?php echo $GLOBALS["protected"]["app"]["url"] ?>" class="col s12">
          <div class="modal-content">
             <h4>Login</h4>
             <!-- form -->
@@ -91,7 +91,7 @@
       <!-- modal1 content ends -->
        <!-- modal2 content -->
        <div id="modal2" class="modal">
-        <form method="post" action="" class="col s12">
+        <form method="post" action="<?php echo $GLOBALS["protected"]["app"]["url"] ?>" class="col s12">
          <div class="modal-content">
             <h4>Sign Up</h4>
             <!-- form -->
@@ -99,8 +99,14 @@
                   <input type="hidden" name="signup" value="signup">
                   <div class="row">
                      <div class="input-field col s12 m12">
+                        <input name="name" placeholder="Full Name" id="name" type="text" class="validate" required="" aria-required="true">
+                        <label for="name">Full Name</label>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="input-field col s12 m12">
                         <input name="username" placeholder="Username" id="username" type="text" class="validate" required="" aria-required="true">
-                        <label for="username">First Name</label>
+                        <label for="username">Username</label>
                      </div>
                   </div>
                   <div class="row">
@@ -127,7 +133,7 @@
       </div>
       <!-- modal2 content ends -->
    </body>
-   <script type="text/javascript" src="http://localhost:8080/assets/js/jquery.js"></script><script type="text/javascript" src="http://localhost:8080/assets/js/material.js"></script>
+   <script type="text/javascript" src="http://localhost/ieeetodo//assets/js/jquery.js"></script><script type="text/javascript" src="http://localhost/ieeetodo//assets/js/material.js"></script>
    <script>
       $(document).ready(function(){
         $('.sidenav').sidenav();
