@@ -6,12 +6,13 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1.0" name="viewport">
     <title>{{@name}}</title>
     <style>
-     .material-icons{
-        cursor:pointer;
-     }   
+        .material-icons {
+            cursor: pointer;
+            color: #ff9800;
+        }
     </style>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    {.material.}{.custom.}
+    {.material.}{.custom.}{.animate.}{.sweetalert.}
 </head>
 
 <body>
@@ -25,7 +26,7 @@
             </ul>
             <ul class="sidenav" id="nav-mobile">
                 <li>
-                    <a href="#">Navbar Link</a>
+                    <a href="{{@url}}">{{@name}}</a>
                 </li>
             </ul><a class="sidenav-trigger" data-target="nav-mobile" href="#"><i class="material-icons">menu</i></a>
         </div>
@@ -34,9 +35,9 @@
         <div class="container">
             <br>
             <br>
-            <h1 class="header center orange-text">{{@name}}</h1>
+            <h1 class="header center orange-text animated heartBeat">{{@name}}</h1>
             <div class="row center">
-                <div class="row">
+                <div class="row ">
                     <div class="col s12 m12">
                         <div class="card white">
                             <div class="card-content">
@@ -49,7 +50,7 @@
                                                 <label for="taskTextField">Add a task</label>
                                             </div>
                                             <div class="input-field col s2 m2">
-                                                <button class="btn waves-effect waves-light orange" name="action" type="button" id="addTask" >Add Task!</button>
+                                                <button class="btn waves-effect waves-light orange" name="action" type="button" id="addTask">Add Task!</button>
                                             </div>
                                         </div>
                                     </div>
@@ -57,19 +58,18 @@
                                 <!--  -->
                             </div>
                             <div class="card-action">
-                               <!-- data table -->
-                               <table>
-                                 <tbody id="tableOutput"></tbody>
-                                 </table>
-                                       
-                               <!-- data table ends -->
+                                <!-- data table -->
+                                <table>
+                                    <tbody id="tableOutput"></tbody>
+                                </table>
+
+                                <!-- data table ends -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row center">
-                <!-- <button data-target='modal2' class="btn-large waves-effect waves-light orange modal-trigger">Create Account</a> -->
             </div>
             <br>
             <br>
@@ -87,77 +87,148 @@
     <footer class="page-footer light-blue lighten-1">
         <div class="footer-copyright">
             <div class="container">
-                <a class="white-text" href="https://github.com/YashKumarVerma/ieeeTodoApp">View Source Code</a>
+                <div class="left-align">
+                    <span class="white-text">Logged in as {{user['name']}} (@{{user['username']}}), from {{_SERVER['REMOTE_ADDR']}}</span>
+                </div>
+                <div class="right-align">
+                    <a class="white-text" href="https://github.com/YashKumarVerma/ieeeTodoApp">The source code is available here</a>
+                </div>
             </div>
         </div>
-    </footer>{#jquery#}{#material#}
+    </footer>{#jquery#}{#material#}{#sweetalert#}
 </body>
 <script>
+    $(document).ready(function() {
+        processTasks();
+        initializeCheckBoxes();
+        $('.sidenav').sidenav();
+        $('.modal').modal();
+    });
 
-$(document).ready(function() {
-   processTasks();
-   $('.sidenav').sidenav();
-   $('.modal').modal();
-});
+    // process new task addtion
+    $("#addTask").on("click", function() {
+        var textField = $("#taskTextField").val();
+        var time = new Date();
+        var timestamp = Math.round(time.getTime() / 1000);
 
-// process new task addtion
-$("#addTask").on("click",function(){
-   var textField = $("#taskTextField").val();
-   var time = new Date();
-   var timestamp = Math.round(time.getTime()/1000);
+        if (textField.trim()== "") {
+            swal("Whops", "The field cannot be empty", "error");
+            return;
+        }
 
-   // attempt to send data
-   $.ajax({
-      url:"{{@url}}api/createTask",
-      method:"POST",
-      data:{ text:textField, time:timestamp },
-      success:function(resp){
-         resp = JSON.parse(resp);
-         if(resp.success){
-            // success, so update the table with data
-            // $("#tableOutput").append(string);
-         }else{
-            // false, so show error
-            alert("There was an error processing your request : " + resp.message);
-         }
-      }
-   })
-});
 
-function processTasks(){
-   var data = {{tasks}};
-   // if there is data, or it is non zero
-   if(data){
-      // populate the table with data #tableOutput
-      data.forEach(function(x){
-         addEntry(x);
-      });
+        // attempt to send data
+        $.ajax({
+            url: "{{@url}}api/createTask",
+            method: "POST",
+            data: {
+                text: textField,
+                time: timestamp
+            },
+            success: function(resp) {
+                resp = JSON.parse(resp);
+                if (resp.success) {
+                    // add to table
+                    var x = $("#taskTextField").val();
+                    $("#tableOutput").prepend(addEntry({
+                        uid: resp.data.uid,
+                        taskname: x
+                    })).fade();
+                } else {
+                    alert("There was an error processing your request : " + resp.message);
+                }
+            }
+        })
+    });
 
-   }
-   // when there is no data
-   else{
-      $("#tableOutput").html("<tr><td>Looks like you have finished all your work ! Great Job.</td></tr>");
-   }
-}
+    function processTasks() {
+        var data = {{tasks}};
+        // if there is data, or it is non zero
+        if (data) {
+            // populate the table with data #tableOutput
+            data.forEach(function(x) {
+                $("#tableOutput").append(addEntry(x));
+            });
+        }
+        // when there is no data
+        else {
 
-function processCheckbox(uid){
-   console.log(uid);
-}
+        }
+    }
 
-function processDelete(uid){
-   console.log(uid);
-}
+    function processCheckbox(uid) {
+        var checked = $("#checkbox_" + uid).is(':checked');
 
-function addEntry(x){
-   string = "";
-   string += '<tr id="task_'+x.uid+'">';
-   string += '<td id="icon_'+x.uid+'" data-uid="'+x.uid+'" class="holder_icon">';
-   string += '<p><label><input id="checkbox_'+x.uid+'" onclick="processCheckbox('+x.uid+')" type="checkbox"/><span><span></label></p></td>';
-   string += '<td id="text_'+x.uid+'" class="holder_text">'+x.taskname+'</td>';
-   string += '<td id="delete_'+x.uid+'" onclick="processDelete('+x.uid+')" data-uid="'+x.uid+'" class="right-align holder_delete"><i class="material-icons">close</i></td>';
-   string += '<tr>';
-   $("#tableOutput").append(string);
-}
+        $.ajax({
+            url: "{{@url}}api/updateCheck",
+            method: "POST",
+            data: {
+                checked: checked,
+                uid: uid
+            },
+            success: function(resp) {
+                resp = JSON.parse(resp);
+                console.log(resp);
+            }
+        });
+    }
 
+    function processDelete(uid) {
+        //    make ajax request to delete item
+        swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this task!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            },
+            function(){
+                $.ajax({
+                    url: "{{@url}}api/deleteTask",
+                    data: {
+                        uid: uid
+                    },
+                    method: 'POST',
+                    success: function(resp) {
+                        resp = JSON.parse(resp);
+                        swal("Deleted!", "Your imaginary file has been deleted.", "success");
+        
+                        // remove the entry of particular id from table
+                        $("#task_" + resp.data.uid).addClass("animated fadeOutUp");
+                        $("#task_" + resp.data.uid).hide(1000);
+                    }
+                });
+                
+        });
+
+    }
+
+    function addEntry(x) {
+        string = "";
+        string += '<tr id="task_' + x.uid + '">';
+        string += '<td id="icon_' + x.uid + '" data-uid="' + x.uid + '" class="holder_icon">';
+        string += '<p><label><input class="x" data-checked="' + x.checked + '" id="checkbox_' + x.uid + '" onclick="processCheckbox(' + x.uid + ')" type="checkbox"/><span><span></label></p></td>';
+        string += '<td id="text_' + x.uid + '" class="holder_text">' + x.taskname + '</td>';
+        string += '<td id="delete_' + x.uid + '" onclick="processDelete(' + x.uid + ')" data-uid="' + x.uid + '" class="right-align holder_delete"><i class="material-icons">close</i></td>';
+        string += '<tr>';
+        return string;
+    }
+
+    // function to set initial state of checkBoxes
+    function initializeCheckBoxes() {
+        $(".x").each(function(x) {
+            // if box checked already
+            if ($(this).data("checked")) {
+                $(this).attr("checked", true);
+            }
+            // if box not checked
+            else {
+                $(this).attr("checked", false);
+            }
+        });
+    }
 </script>
+
 </html>

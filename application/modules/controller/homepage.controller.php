@@ -77,6 +77,8 @@ function dashboard(){
     $data = [];
     $data['user'] = $_SESSION['user'];
     $data['tasks'] = json_encode($tasks);
+
+    // console($data);
     $view->render('homepage.dashboard.php', $data, $GLOBALS['turbo']);
     
 }
